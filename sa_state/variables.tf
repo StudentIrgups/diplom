@@ -9,9 +9,9 @@ variable "folder_id" {
   description = "https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id"
 }
 
-variable "authorized_key" {
+variable "authorized_key_diplom" {
   type        = string
-  default     = "~/.authorized_key.json"
+  default     = "~/.auth_key_diplom.json"
   description = "authorized key"
 }
 
@@ -21,7 +21,8 @@ variable "default_zone" {
   description = "https://cloud.yandex.ru/docs/overview/concepts/geo-scope"
 }
 
-variable "sa_id" {
-  type        = string
-  description = "ID of service account"
+variable "credentials" {
+  type    = string
+  default = "credentials"
+  description = "Credentials to access to s3"
 }

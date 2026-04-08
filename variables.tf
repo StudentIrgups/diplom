@@ -11,7 +11,7 @@ variable "folder_id" {
 
 variable "authorized_key" {
   type        = string
-  default     = "~/.authorized_key.json"
+  default     = "~/.authorized_key_diplom.json"
   description = "authorized key"
 }
 
@@ -31,4 +31,51 @@ variable "public_cidr0" {
   type = string
   default = "192.168.10.0/24"
   description = "Public CIDR 10"
+}
+
+variable "bastion_settings" {
+  description = "VM NAT"
+  type = object({
+    hostname    = string
+    zone        = string
+    ipaddress   = string
+    nat         = bool
+  })
+  default = {
+    hostname        = "bastion"
+    zone            = "ru-central1-a"
+    ipaddress       = "192.168.1.254"
+    nat             = true
+  }
+}
+
+variable "vms_resources" {
+  type = map(object({
+    cores         = number
+    memory        = number
+    core_fraction = number
+    disk_size     = number
+    type          = string
+  }))
+  default = {
+    "bastion" = {
+      cores         = 2
+      memory        = 4
+      core_fraction = 20
+      disk_size     = 20
+      type          = "network-hdd"
+    },
+  }
+}
+
+variable "vm_ubuntu_version" {
+  type        = string
+  default     = "ubuntu-2204-lts"
+  description = "Distr"
+}
+
+variable "vm_platform_id" {
+  type        = string
+  default     = "standard-v3"
+  description = "Platform id"
 }

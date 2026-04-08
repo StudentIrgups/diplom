@@ -8,3 +8,7 @@ output "subnet_id" {
       k.name => { id = k.id, zone = k.zone, name = k.name }
   }
 }
+
+output "ip_static" {
+  value = yandex_vpc_address.public-ip-static.external_ipv4_address[0].address
+}
