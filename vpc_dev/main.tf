@@ -23,7 +23,7 @@ resource "yandex_vpc_subnet" "develop" {
 
 resource "yandex_vpc_address" "public-ip-static" {
   name                = "ip-static-public"
-  deletion_protection = true
+  #deletion_protection = true
   external_ipv4_address {
     zone_id = var.default_zone
   }

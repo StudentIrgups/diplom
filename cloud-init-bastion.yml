@@ -1,0 +1,38 @@
+#cloud-config
+users:
+  - name: ubuntu
+    groups: sudo
+    shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    ssh_authorized_keys:
+      - ${ssh_public_key}
+package_update: true     
+packages: ${req_packages}
+
+write_files:
+  - path: /tmp/id_rsa
+    permissions: '0600'
+    encoding: b64
+    content: ${base64encode(ssh_private_key)}
+
+  - path: /tmp/hosts.ini
+    permissions: '0644'
+    encoding: b64
+    content: ${base64encode(file_ansible_hosts)}
+
+  - path: /tmp/extra.yml
+    permissions: '0644'
+    encoding: b64
+    content: ${file_extra}
+
+  - path: /tmp/kubespray.sh
+    permissions: '0777'
+    encoding: b64
+    content: ${file_kubespray}
+
+runcmd:
+  - sudo chown -R ubuntu:ubuntu /home/ubuntu
+  - sudo -u ubuntu cp /etc/skel/.bashrc /etc/skel/.profile /home/ubuntu
+  - sudo cp /tmp/id_rsa /home/ubuntu/.ssh/id_rsa; sudo chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+
+  - [ sudo, -u, ubuntu, -i, bash, -c, "/tmp/kubespray.sh ${name_control_node}"  ]       

@@ -1,0 +1,13 @@
+[kube_control_plane]
+%{ for index, i in k8s-nodes ~}
+${i["name"]} ansible_host=${i["network_private"]}    ip=${i["network_private"]}  etcd_member_name=etcd${index+1}
+%{ endfor ~}
+
+[etcd:children]
+kube_control_plane
+
+[calico_rr]
+
+[k8s_cluster:children]
+kube_control_plane
+calico_rr
