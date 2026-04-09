@@ -73,10 +73,4 @@ variable "bastion_settings" {
     ipaddress   = string
     nat         = bool
   })
-  default = {
-    hostname        = "bastion"
-    zone            = "ru-central1-a"
-    ipaddress       = "192.168.1.254"
-    nat             = true
-  }
 }

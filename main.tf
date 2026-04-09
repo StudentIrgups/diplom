@@ -1,9 +1,10 @@
 module "vpc_dev" {
-  source         = "./vpc_dev"
-  vpc_name       = "diplom"
-  cloud_id       = var.cloud_id
-  folder_id      = var.folder_id
-  authorized_key = local.auth_key_file
+  source           = "./vpc_dev"
+  vpc_name         = "diplom"
+  cloud_id         = var.cloud_id
+  folder_id        = var.folder_id
+  authorized_key   = local.auth_key_file
+  bastion_settings = var.bastion_settings
 }
 
 data "yandex_compute_image" "ubuntu" {
