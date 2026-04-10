@@ -85,3 +85,9 @@ variable "req_packages" {
     default     = [ "vim", "htop", "tmux", "net-tools", "nginx", "ansible", "git", "python3-venv", "libssl-dev", "liblzma-dev", "python3-tk", "libsqlite3-dev", "libreadline-dev", "libffi-dev", "libncurses5-dev", "libncursesw5-dev", "libbz2-dev", "build-essential", "gcc", "python3-pip", "docker.io" ]
     description = "Packages by default"
 }
+
+variable "nat_image_id" {
+  type        = string
+  default     = "fd80mrhj8fl2oe87o4e1"
+  description = "Image for NAT (bastion)"
+}

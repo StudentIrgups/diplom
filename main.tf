@@ -27,8 +27,8 @@ resource "yandex_compute_instance" "bastion" {
     core_fraction = var.vms_resources["bastion"].core_fraction
   }
   boot_disk {
-    initialize_params {
-      image_id = data.yandex_compute_image.ubuntu.image_id
+    initialize_params {      
+      image_id = var.nat_image_id
       size     = var.vms_resources["bastion"].disk_size
       type     = var.vms_resources["bastion"].type
     }
