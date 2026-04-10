@@ -30,9 +30,27 @@ write_files:
     encoding: b64
     content: ${file_kubespray}
 
+  - path: /tmp/proxy
+    permissions: '0644'
+    encoding: b64
+    content: ${base64encode(file_content)} 
+
+  - path: /home/ubuntu/nginx-app.sh
+    permissions: '0777'
+    encoding: b64
+    content: ${file_appsh}
+
+  - path: /home/ubuntu/nginx-app.yml
+    permissions: '0644'
+    encoding: b64
+    content: ${file_app}    
+
 runcmd:
   - sudo chown -R ubuntu:ubuntu /home/ubuntu
   - sudo -u ubuntu cp /etc/skel/.bashrc /etc/skel/.profile /home/ubuntu
   - sudo cp /tmp/id_rsa /home/ubuntu/.ssh/id_rsa; sudo chown ubuntu:ubuntu /home/ubuntu/.ssh/id_rsa
+  - sudo cp /tmp/proxy /etc/nginx/sites-available/proxy
+  - sudo ln -s /etc/nginx/sites-available/proxy /etc/nginx/sites-enabled/proxy  
 
-  - [ sudo, -u, ubuntu, -i, bash, -c, "/tmp/kubespray.sh ${name_control_node}"  ]       
+  - [ sudo, -u, ubuntu, -i, bash, -c, "/tmp/kubespray.sh ${name_control_node}"  ]   
+  - [ sudo, -u, ubuntu, -i, bash, -c, "/home/ubuntu/nginx-app.sh" ]    

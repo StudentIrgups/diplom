@@ -88,6 +88,21 @@ variable "req_packages" {
 
 variable "nat_image_id" {
   type        = string
-  default     = "fd80mrhj8fl2oe87o4e1"
+  default     = "fd8g9ua2q01c2qvigpmb" # ubuntu 22.04
   description = "Image for NAT (bastion)"
 }
+
+/* variable "file_privkey" {
+  type = string
+  description = "Private key ssl nginx"
+}
+
+variable "file_fullchain" {
+  type = string
+  description = "Cert chain ssl nginx"
+}
+
+variable "file_chain" {
+  type = string
+  description = "Authority ssl nginx"
+} */

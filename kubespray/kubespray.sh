@@ -23,7 +23,7 @@ cd kubespray
 
 cp -rfp inventory/sample inventory/k8s_cluster
 
-cp ../extra.yml inventory/k8s_cluster/group_vars/k8s_cluster/addons.yml
+#cp ../extra.yml inventory/k8s_cluster/group_vars/k8s_cluster/addons.yml
 
 python3 -m venv .venv
 

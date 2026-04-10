@@ -63,6 +63,15 @@ data "template_file" "cloudinit-bastion" {
     file_ansible_hosts        = templatefile("${path.module}/hosts.tftpl", {
         k8s-nodes = local.sorted_list_k8s_nodes
     })
+
+    file_content              = templatefile("${path.module}/proxy.tftpl", {
+        k8s-nodes             = local.sorted_list_k8s_nodes
+/*         file_privkey_proxy    = sensitive(try(filebase64(var.file_privkey), ""))
+        file_fullchain_proxy  = sensitive(try(filebase64(var.file_fullchain), ""))
+        file_chain_proxy      = sensitive(try(filebase64(var.file_chain), "")) */
+    })
+    file_appsh                = filebase64("${abspath(path.module)}/nginx-app/nginx-app.sh")
+    file_app                  = filebase64("${abspath(path.module)}/nginx-app/nginx-app.yml")
   }
 }
 

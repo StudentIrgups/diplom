@@ -1,0 +1,47 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name:  app     
+  labels:
+    app: app
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deploy-app
+  namespace: app
+  labels:
+    app: app
+spec:
+  replicas: 1 
+  selector:
+    matchLabels:
+      app: app
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+        - name: app
+          image: alexbeznosov/custom-nginx:latest
+          ports:
+            - containerPort: 80
+              name: app          
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app
+  name: app
+  namespace: app
+spec:
+  type: NodePort
+  ports:
+  - name: app
+    port: 80
+    targetPort: 80
+    nodePort: 80
+  selector:
+    app: app

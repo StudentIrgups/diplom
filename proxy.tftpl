@@ -1,0 +1,61 @@
+upstream backend_servers {
+%{ for content in k8s-nodes ~}
+    server ${content["network_private"]}:31000 max_fails=1 fail_timeout=10s;
+%{ endfor ~}
+}
+
+upstream backend_app {
+%{ for content in k8s-nodes ~}
+    server ${content["network_private"]}:80 max_fails=1 fail_timeout=10s;
+%{ endfor ~}
+}
+
+upstream backend_atlantis {
+%{ for content in k8s-nodes ~}
+    server ${content["network_private"]}:30141 max_fails=1 fail_timeout=10s;
+%{ endfor ~}
+}
+
+server {
+    listen 80;
+
+    server_name grafana.info.site;
+
+    location / {
+        proxy_pass http://backend_servers;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+
+    server_name app.info.site;
+
+    location / {
+        proxy_pass http://backend_app;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+server {
+    listen 80;
+
+    server_name atlantis.info.site;
+
+    location / {
+        proxy_pass http://backend_atlantis;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+    }
+}
