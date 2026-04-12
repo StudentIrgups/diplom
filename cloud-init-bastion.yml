@@ -374,6 +374,12 @@ runcmd:
   - sudo usermod -aG docker ubuntu
   - newgrp docker
 
+  # helm
+  - curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
+  - helm completion bash > ~/.helm_completion.sh
+  - echo "source ~/.helm_completion.sh" >> ~/.bashrc
+  - source ~/.bashrc
+
   - [ sudo, -u, ubuntu, -i, bash, -c, "/tmp/kubespray.sh ${name_control_node}" ]   
   - [ sudo, -u, ubuntu, -i, bash, -c, "/home/ubuntu/nginx-app.sh" ]    
   - [ sudo, -u, ubuntu, -i, bash, -c, "/tmp/kube-prometheus.sh" ]

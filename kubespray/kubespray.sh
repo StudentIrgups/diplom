@@ -66,16 +66,9 @@ ssh -o StrictHostKeyChecking=no ubuntu@$1 "sudo cp /etc/kubernetes/admin.conf /t
 scp -o StrictHostKeyChecking=no ubuntu@$1:/tmp/config .kube/config
 
 sudo chown ubuntu:ubuntu .kube/config
+echo "there can be some problem"
 
 val=$(kubectl get nodes | grep control-plane | cut -d' ' -f1 | tail -n +1)
 for server in $val; do
   kubectl taint nodes "$server" node-role.kubernetes.io/control-plane:NoSchedule-
 done
-# helm
-curl https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
-
-helm completion bash > ~/.helm_completion.sh
-
-echo "source ~/.helm_completion.sh" >> ~/.bashrc
-
-source ~/.bashrc
