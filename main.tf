@@ -52,26 +52,65 @@ data "template_file" "cloudinit-bastion" {
   template = file("./cloud-init-bastion.yml")
 
   vars = {
-    ssh_public_key  = file("~/.ssh/ssh-key-1756817743452.pub")
-    ssh_private_key = tls_private_key.key.private_key_pem
+    ssh_public_key            = file("~/.ssh/ssh-key-1756817743452.pub")
+    ssh_private_key           = tls_private_key.key.private_key_pem
 
     req_packages              = jsonencode(var.req_packages)
     name_control_node         = local.sorted_list_k8s_nodes[0].name
-    file_kubespray            = filebase64("${abspath(path.module)}/kubespray/kubespray.sh")
+    sh_kubespray              = filebase64("${abspath(path.module)}/kubespray/kubespray.sh")
     file_extra                = filebase64("${abspath(path.module)}/kubespray/extra.yml")
 
-    file_ansible_hosts        = templatefile("${path.module}/hosts.tftpl", {
+    tpl_hosts                 = templatefile("${path.module}/hosts.tftpl", {
         k8s-nodes = local.sorted_list_k8s_nodes
     })
 
-    file_content              = templatefile("${path.module}/proxy.tftpl", {
-        k8s-nodes             = local.sorted_list_k8s_nodes
-/*         file_privkey_proxy    = sensitive(try(filebase64(var.file_privkey), ""))
-        file_fullchain_proxy  = sensitive(try(filebase64(var.file_fullchain), ""))
-        file_chain_proxy      = sensitive(try(filebase64(var.file_chain), "")) */
+    tpl_proxy                 = templatefile("${path.module}/proxy.tftpl", {
+        k8s-nodes = local.sorted_list_k8s_nodes
     })
-    file_appsh                = filebase64("${abspath(path.module)}/nginx-app/nginx-app.sh")
-    file_app                  = filebase64("${abspath(path.module)}/nginx-app/nginx-app.yml")
+    sh_app                    = templatefile("${path.module}/nginx-app/nginx-app.tftpl", {
+      dockerhub_username = var.dockerhub_username
+      dockerhub_token    = var.dockerhub_token
+    })
+    yml_app                   = filebase64("${abspath(path.module)}/nginx-app/nginx-app.yml")
+    
+    docker_nginx              = templatefile("${path.module}/nginx-app/Dockerfile.tftpl", {
+        nginx-index-file = var.nginx_index_file
+    })
+    sh_prometheus             = filebase64("${abspath(path.module)}/grafana/kube-prometheus.sh")
+    yml_grafana_node_port     = filebase64("${abspath(path.module)}/grafana/grafana-node-port.yml")
+    authorized_key_diplom     = filebase64("${var.authorized_key}")
+    s3_key                    = filebase64("${var.s3_key}")
+
+    sh_atlantis               = filebase64("${abspath(path.module)}/atlantis/atlantis.sh")
+    github_token              = var.github_token
+    db_host                   = var.db_host
+    db_user                   = var.db_user
+    db_password               = var.db_password
+    db_name                   = var.db_name
+    mysql_root_password       = var.mysql_root_password
+    repos                     = var.repos
+    github_username           = var.github_username
+    cloud_id                  = var.cloud_id
+    folder_id                 = var.folder_id
+    public_ip                 = module.vpc_dev.ip_static    
+    terraformrc               = filebase64("${abspath(path.module)}/terraform/.terraformrc") 
+
+
+    k8s_namespace          = var.k8s_namespace
+    atlantis_version       = var.atlantis_version
+    atlantis_replicas      = var.atlantis_replicas
+    atlantis_port          = var.atlantis_port
+    atlantis_memory_request = var.atlantis_memory_request
+    atlantis_memory_limit   = var.atlantis_memory_limit
+    atlantis_cpu_request    = var.atlantis_cpu_request
+    atlantis_cpu_limit      = var.atlantis_cpu_limit
+    github_user             = var.github_user
+    github_token            = var.github_token
+    webhook_secret          = var.webhook_secret
+    repo_allowlist          = var.repo_allowlist
+    ingress_enabled         = var.ingress_enabled
+    ingress_host            = var.ingress_host
+    ingress_class           = var.ingress_class   
   }
 }
 
