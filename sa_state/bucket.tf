@@ -20,7 +20,7 @@ resource "yandex_storage_bucket" "to-save-state" {
 
 resource "local_sensitive_file" "credentials" {
   depends_on = [ yandex_iam_service_account_static_access_key.sa-static-key ]
-  filename = pathexpand("~/.${var.credentials}")
+  filename = pathexpand("~/.aws/${var.credentials}")
   content  = <<EOT
     [default]
       aws_access_key_id = ${yandex_iam_service_account_static_access_key.sa-static-key.access_key}
