@@ -177,3 +177,7 @@ resource "local_file" "hosts_templatefile" {
   filename          = "${abspath(path.module)}/hosts.ini"
   file_permission   = "0644"
 }
+
+resource "random_string" "test" {
+  length = 8
+}
