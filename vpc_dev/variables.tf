@@ -67,7 +67,7 @@ variable "mass_zones" {
 
 variable "authorized_key" {
   type        = string
-  default     = "~/.auth_key_diplom.json"
+  default     = "~/.yc/auth_key_diplom.json"
   description = "authorized key"
 }
 

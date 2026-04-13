@@ -16,7 +16,7 @@ terraform {
     region = "ru-central1"
     key    = "terraform.tfstate"
 
-    shared_credentials_files = ["~/.credentials"]
+    shared_credentials_files = ["~/.aws/credentials"]
     
     use_lockfile = true                 
 
