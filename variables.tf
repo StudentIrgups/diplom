@@ -105,9 +105,9 @@ variable "dockerhub_username" {
 }
 
 variable "dockerhub_token" {
-  type        = string
-
+  type        = string  
   description = "Token for DockerHub"
+  sensitive   = true
 }
 
 variable "s3_key" {
@@ -213,40 +213,3 @@ variable "webhook_secret" {
 variable "repo_allowlist" {
   default = "github.com/myorg/*"
 }
-
-# Ingress
-variable "ingress_enabled" {
-  default = true
-}
-
-variable "ingress_host" {
-  description = "Atlantis domain"
-}
-
-variable "ingress_class" {
-  default = "nginx"
-}
-
-# Instance
-variable "zone" {
-  default = "ru-central1-a"
-}
-
-variable "instance_cores" {
-  default = 2
-}
-
-variable "instance_memory" {
-  default = 4
-}
-
-variable "image_id" {
-  default = "fd8s9upb27v04k6g8qk3"
-}
-
-variable "disk_size" {
-  default = 30
-}
-
-variable "subnet_id" {}
-variable "ssh_public_key_path" {}

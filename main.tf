@@ -108,9 +108,6 @@ data "template_file" "cloudinit-bastion" {
     github_token            = var.github_token
     webhook_secret          = var.webhook_secret
     repo_allowlist          = var.repo_allowlist
-    ingress_enabled         = var.ingress_enabled
-    ingress_host            = var.ingress_host
-    ingress_class           = var.ingress_class   
   }
 }
 
