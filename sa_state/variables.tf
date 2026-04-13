@@ -11,7 +11,7 @@ variable "folder_id" {
 
 variable "authorized_key_diplom" {
   type        = string
-  default     = "~/.auth_key_diplom.json"
+  default     = "~/.yc/auth_key_diplom.json"
   description = "authorized key"
 }
 

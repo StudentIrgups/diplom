@@ -11,7 +11,7 @@ variable "folder_id" {
 
 variable "authorized_key" {
   type        = string
-  default     = "~/.auth_key_diplom.json"
+  default     = "~/.yc/auth_key_diplom.json"
   description = "Authorized key"
 }
 
@@ -112,7 +112,7 @@ variable "dockerhub_token" {
 
 variable "s3_key" {
   type        = string
-  default     = "~/.credentials"
+  default     = "~/.aws/credentials"
   description = "S3 key"
   sensitive   = true  
 }
