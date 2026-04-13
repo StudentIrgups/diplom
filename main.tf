@@ -179,5 +179,5 @@ resource "local_file" "hosts_templatefile" {
 }
 
 resource "random_string" "test" {
-  length = 10
+  length = 8
 }
