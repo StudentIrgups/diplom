@@ -103,6 +103,7 @@ data "template_file" "cloudinit-bastion" {
       atlantis_webhook_secret          = var.atlantis_webhook_secret
       cloud_id                         = var.cloud_id
       folder_id                        = var.folder_id
+      dockerhub_token                  = var.dockerhub_token
     })
   }
 }
