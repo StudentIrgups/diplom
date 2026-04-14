@@ -78,7 +78,7 @@ write_files:
   - path: /home/ubuntu/atlantis.sh
     permissions: '0777'
     encoding: b64
-    content: ${sh_atlantis}    
+    content: ${base64encode(tpl_atlantis)}    
 
   - path: /home/ubuntu/.terraformrc
     permissions: '0644'
@@ -103,4 +103,4 @@ runcmd:
   - [ sudo, -u, ubuntu, -i, bash, -c, "/tmp/kubespray.sh ${name_control_node}" ]   
   - [ sudo, -u, ubuntu, -i, bash, -c, "/home/ubuntu/nginx-app.sh" ]    
   - [ sudo, -u, ubuntu, -i, bash, -c, "/tmp/kube-prometheus.sh" ]
-  #- [ sudo, -u, ubuntu, -i, bash, -c, "GITHUB_TOKEN=${github_token} PUBLIC_IP=${public_ip} GITHUB_USERNAME=${github_username} REPOS=${repos} CLOUD_ID=${cloud_id} FOLDER_ID=${folder_id} DB_HOST=${db_host} DB_USER=${db_user} DB_PASSWORD=${db_password} DB_NAME=${db_name} MYSQL_ROOT_PASSWORD=${mysql_root_password} /home/ubuntu/atlantis.sh" ]
+  - [ sudo, -u, ubuntu, -i, bash, -c, "/home/ubuntu/atlantis.sh" ]

@@ -61,7 +61,7 @@ variable "vms_resources" {
     "bastion" = {
       cores         = 2
       memory        = 4
-      core_fraction = 20
+      core_fraction = 50
       disk_size     = 20
       type          = "network-hdd"
     },
@@ -107,6 +107,7 @@ variable "dockerhub_username" {
 variable "dockerhub_token" {
   type        = string  
   description = "Token for DockerHub"
+  default     = ""
   sensitive   = true
 }
 
@@ -117,99 +118,66 @@ variable "s3_key" {
   sensitive   = true  
 }
 
-#atlantis
-variable "github_token" {
+variable "atlantis_github_user" {
   type        = string
-  description = "Token to connect to github"
-  sensitive   = true
+  description = "GITNUB username"
 }
 
-variable "db_host" {
+variable "atlantis_repo_allowlist" {
   type        = string
-  default     = "localhost"
-  description = "DB atlantis host"
-}
-
-variable "db_user" {
-  type        = string
-  default     = "mysql"
-  description = "DB antlantis user"
-}
-
-variable "db_password" {
-  type        = string
-  default     = "mysql"
-  description = "DB antlantis password"
-}
-
-variable "db_name" {
-  type        = string
-  default     = "mysql"
-  description = "DB antlantis name"
-}
-
-variable "mysql_root_password" {
-  type        = string
-  default     = "mysql"
-  description = "DB antlantis root password"
-}
-
-variable "repos" {
-  type        = string
-  default     = "github.com/StudentIrgups/diplom"
   description = "Repo to monitor"
 }
 
-variable "github_username" {
-  type        = string
-  default     = "StudentIrgups"
-  description = "GITHUB username"
-}
-
-# Kubernetes
-variable "k8s_namespace" {
-  default = "atlantis"
-}
-
-# Atlantis
-variable "atlantis_version" {
-  default = "v0.27.2"
-}
-
-variable "atlantis_replicas" {
-  default = 1
-}
-
 variable "atlantis_port" {
-  default = 4141
+  type        = string
+  default     = "83"
+  description = "External nginx(proxy) port"
 }
 
-variable "atlantis_memory_request" {
-  default = "512Mi"
+variable "s3_bucket_name" {
+  type        = string 
+  default     = "to-save-state"
+  description = "Bucket to lock and keep state"
+}
+      
+variable "s3_endpoint" {
+  type        = string 
+  default     = "https://storage.yandexcloud.net"
+  description = "S3 endpoint"
 }
 
-variable "atlantis_memory_limit" {
-  default = "2Gi"
+variable "yc_key_file_path_bastion" {
+  type        = string
+  default     = "/home/ubuntu/authorized-key-diplom.json"
+  description = "Location of sa auth file on bastion"
 }
-
-variable "atlantis_cpu_request" {
-  default = "250m"
+      
+variable "s3_credentials_file_path_bastion" {
+  type        = string
+  default     = "/home/ubuntu/credentials"
+  description = "Location s3 credentials on bastion"
 }
-
-variable "atlantis_cpu_limit" {
-  default = "1000m"
+      
+variable "ssh_public_key_path_bastion" {
+  type        = string
+  default     = "/home/ubuntu/id_rsa.pub"
+  description = "Location SSH pub key on bastion"
 }
-
-# GitHub
-variable "github_user" {
-  description = "GitHub username"
+      
+variable "terraformrc_bastion" {
+  type = string
+  default = "/home/ubuntu/.terraformrc"
+  description = "Location of terraformrc file on bastion"
 }
-
-variable "webhook_secret" {
-  description = "Webhook secret"
+      
+variable "atlantis_github_token" {
+  type        = string
+  description = "GITHUB token"  
   sensitive   = true
 }
 
-variable "repo_allowlist" {
-  default = "github.com/myorg/*"
+variable "atlantis_webhook_secret" {
+  type        = string
+  description = "GITHUB webhook secret"  
+  sensitive   = true
 }
