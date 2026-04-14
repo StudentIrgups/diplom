@@ -78,7 +78,7 @@ write_files:
   - path: /home/ubuntu/atlantis.sh
     permissions: '0777'
     encoding: b64
-    content: ${sh_atlantis}    
+    content: ${base64encode(tpl_atlantis)}    
 
   - path: /home/ubuntu/.terraformrc
     permissions: '0644'

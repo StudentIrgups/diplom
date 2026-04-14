@@ -86,7 +86,7 @@ data "template_file" "cloudinit-bastion" {
     public_ip                 = module.vpc_dev.ip_static    
     terraformrc               = filebase64("${abspath(path.module)}/terraform/.terraformrc") 
 
-    sh_atlantis               = templatefile("${path.module}/atlantis/atlantis.sh.tpl", {
+    tpl_atlantis               = templatefile("${path.module}/atlantis/atlantis.sh.tpl", {
       ip_bastion                       = module.vpc_dev.ip_static  
       nodeport                         = 32000
       atlantis_github_user             = var.atlantis_github_user
@@ -100,6 +100,8 @@ data "template_file" "cloudinit-bastion" {
       terraformrc_bastion              = var.terraformrc_bastion
       atlantis_github_token            = var.atlantis_github_token
       atlantis_webhook_secret          = var.atlantis_webhook_secret
+      cloud_id                         = var.cloud_id
+      folder_id                        = var.folder_id
     })
   }
 }

@@ -1,11 +1,11 @@
 #!/bin/bash
 set -e
 
-mkdir -p /tmp/ansible-atlantis/vars
+git clone https://github.com/StudentIrgups/ansible-atlantis.git /tmp/ansible-atlantis
 
-cat > /tmp/ansible-atlantis/vars/vars.yml <<EOF
+cat > /tmp/ansible-atlantis/vars.yml <<EOF
 ---
-ip_bastion: "${IP_BASTION}"
+ip_bastion: "${ip_bastion}"
 # Kubernetes
 k8s_namespace: "atlantis"
 
@@ -13,7 +13,7 @@ k8s_namespace: "atlantis"
 atlantis_image: "ghcr.io/runatlantis/atlantis:latest"
 atlantis_replicas: 1
 atlantis_port: 4141
-atlantis_nodeport: "${NODEPORT}"
+atlantis_nodeport: "${nodeport}"
 
 # Ресурсы
 atlantis_resources:
@@ -25,10 +25,10 @@ atlantis_resources:
     cpu: "1000m"
 
 # GitHub
-atlantis_github_user: "${ATLANTIS_GITHUB_USER}"
-atlantis_repo_allowlist: "${ATLANTIS_REPO_ALLOWLIST}"
+atlantis_github_user: "${atlantis_github_user}"
+atlantis_repo_allowlist: "${atlantis_repo_allowlist}"
 github_repo: "diplom"  
-atlantis_webhook_url: "http://${IP_BASTION}:${ATLANTIS_PORT}/events"
+atlantis_webhook_url: "http://${ip_bastion}:${atlantis_port}/events"
 atlantis_yaml_content: |
   version: 3
   projects:
@@ -44,34 +44,32 @@ mysql_database: "atlantis"
 mysql_user: "atlantis"
 
 # S3 (публичные)
-s3_bucket_name: "${S3_BUCKET_NAME}"
-s3_endpoint: "${S3_ENDPOINT}"
+s3_bucket_name: "${s3_bucket_name}"
+s3_endpoint: "${s3_endpoint}"
 
 # Пути к файлам кредов на бастионе
-yc_key_file_path: "${YC_KEY_FILE_PATH_BASTION}"
-s3_credentials_file_path: "${S3_CREDENTIALS_FILE_PATH_BASTION}"
-ssh_public_key_path: "${SSH_PUBLIC_KEY_PATH_BASTION}"
+yc_key_file_path: "${yc_key_file_path_bastion}"
+s3_credentials_file_path: "${s3_credentials_file_path_bastion}"
+ssh_public_key_path: "${ssh_public_key_path_bastion}"
 
-terraformrc_file_path: "${TERRAFORMRC_BASTION}"
+terraformrc_file_path: "${terraformrc_bastion}"
 
 # Yandex Cloud (публичные ID)
-cloud_id: "${CLOUD_ID}"
-folder_id: "${FOLDER_ID}"
+cloud_id: "${cloud_id}"
+folder_id: "${folder_id}"
 EOF
 
 
-cat > /tmp/ansible-atlantis/vars/vault.yml <<EOF
+cat > /tmp/ansible-atlantis/vault.yml <<EOF
 ---
 # GitHub
-atlantis_github_token: "${ATLANTIS_GITHUB_TOKEN}"
-atlantis_webhook_secret: "${ATLANTIS_WEBHOOK_SECRET}"
+atlantis_github_token: "${atlantis_github_token}"
+atlantis_webhook_secret: "${atlantis_webhook_secret}"
 
 # MySQL
 mysql_root_password: "R00t_P@ssw0rd!"
 mysql_password: "Atl@nt1s_DB_P@ssw0rd!"
 EOF
 
-git clone https://github.com/StudentIrgups/ansible-atlantis.git /tmp/ansible-atlantis
-
 cd /tmp/ansible-atlantis
-ansible-playbook deploy-atlantis.yml -e @vars/vars.yml -e @vars/vault.yml
+ansible-playbook deploy-atlantis.yml
