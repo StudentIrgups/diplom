@@ -26,3 +26,10 @@ variable "credentials" {
   default = "credentials"
   description = "Credentials to access to s3"
 }
+
+variable "yc_token" {
+  type        = string
+  default     = ""
+  description = "YC token"
+  sensitive   = true
+}

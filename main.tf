@@ -80,34 +80,27 @@ data "template_file" "cloudinit-bastion" {
     yml_grafana_node_port     = filebase64("${abspath(path.module)}/grafana/grafana-node-port.yml")
     authorized_key_diplom     = filebase64("${var.authorized_key}")
     s3_key                    = filebase64("${var.s3_key}")
-
-    sh_atlantis               = filebase64("${abspath(path.module)}/atlantis/atlantis.sh")
-    github_token              = var.github_token
-    db_host                   = var.db_host
-    db_user                   = var.db_user
-    db_password               = var.db_password
-    db_name                   = var.db_name
-    mysql_root_password       = var.mysql_root_password
-    repos                     = var.repos
-    github_username           = var.github_username
+    
     cloud_id                  = var.cloud_id
     folder_id                 = var.folder_id
     public_ip                 = module.vpc_dev.ip_static    
     terraformrc               = filebase64("${abspath(path.module)}/terraform/.terraformrc") 
 
-
-    k8s_namespace          = var.k8s_namespace
-    atlantis_version       = var.atlantis_version
-    atlantis_replicas      = var.atlantis_replicas
-    atlantis_port          = var.atlantis_port
-    atlantis_memory_request = var.atlantis_memory_request
-    atlantis_memory_limit   = var.atlantis_memory_limit
-    atlantis_cpu_request    = var.atlantis_cpu_request
-    atlantis_cpu_limit      = var.atlantis_cpu_limit
-    github_user             = var.github_user
-    github_token            = var.github_token
-    webhook_secret          = var.webhook_secret
-    repo_allowlist          = var.repo_allowlist
+    sh_atlantis               = templatefile("${path.module}/atlantis/atlantis.sh.tpl", {
+      ip_bastion                       = module.vpc_dev.ip_static  
+      nodeport                         = 32000
+      atlantis_github_user             = var.atlantis_github_user
+      atlantis_repo_allowlist          = var.atlantis_repo_allowlist
+      atlantis_port                    = var.atlantis_port
+      s3_bucket_name                   = var.s3_bucket_name
+      s3_endpoint                      = var.s3_endpoint
+      yc_key_file_path_bastion         = var.yc_key_file_path_bastion
+      s3_credentials_file_path_bastion = var.s3_credentials_file_path_bastion     
+      ssh_public_key_path_bastion      = var.ssh_public_key_path_bastion
+      terraformrc_bastion              = var.terraformrc_bastion
+      atlantis_github_token            = var.atlantis_github_token
+      atlantis_webhook_secret          = var.atlantis_webhook_secret
+    })
   }
 }
 
