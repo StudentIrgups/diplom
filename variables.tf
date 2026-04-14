@@ -1,11 +1,13 @@
 ###cloud vars
 variable "cloud_id" {
   type        = string
+  default     = ""
   description = "https://cloud.yandex.ru/docs/resource-manager/operations/cloud/get-id"
 }
 
 variable "folder_id" {
   type        = string
+  default     = ""
   description = "https://cloud.yandex.ru/docs/resource-manager/operations/folder/get-id"
 }
 
@@ -120,11 +122,13 @@ variable "s3_key" {
 
 variable "atlantis_github_user" {
   type        = string
+  default     = ""
   description = "GITNUB username"
 }
 
 variable "atlantis_repo_allowlist" {
   type        = string
+  default     = ""
   description = "Repo to monitor"
 }
 
