@@ -61,7 +61,7 @@ variable "vms_resources" {
     "bastion" = {
       cores         = 2
       memory        = 4
-      core_fraction = 20
+      core_fraction = 50
       disk_size     = 20
       type          = "network-hdd"
     },
