@@ -44,7 +44,7 @@ mysql_database: "atlantis"
 mysql_user: "atlantis"
 
 # S3 (публичные)
-s3_bucket_name: "${s3_bucket_name}"
+s3_bucket_name: '${s3_bucket_name}'
 s3_endpoint: "${s3_endpoint}"
 
 # Пути к файлам кредов на бастионе
