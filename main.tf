@@ -24,7 +24,8 @@ resource "yandex_compute_instance" "bastion" {
   resources { 
     cores         = var.vms_resources["bastion"].cores
     memory        = var.vms_resources["bastion"].memory
-    core_fraction = var.vms_resources["bastion"].core_fraction
+    #core_fraction = var.vms_resources["bastion"].core_fraction
+    core_fraction = 100
   }
   boot_disk {
     initialize_params {      
