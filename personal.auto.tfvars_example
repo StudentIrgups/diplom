@@ -1,3 +1,10 @@
-token  =  ""
-cloud_id  = ""
-folder_id = ""
+cloud_id     = "xxxxxxxxxxx"
+folder_id    = "xxxxxxxxxxxxx"
+dockerhub_token = "dckr_pat_xxxxxxxxxxxxxxxxxxx"
+atlantis_github_user             = "GitHubuserName"
+atlantis_repo_allowlist          = "github.com/GitHubUserName/repoName"
+atlantis_port                    = "88"
+s3_bucket_name                   = "bucketName"
+atlantis_github_token            = "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+atlantis_webhook_secret          = "someSecret"
+

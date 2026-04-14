@@ -24,7 +24,8 @@ resource "yandex_compute_instance" "bastion" {
   resources { 
     cores         = var.vms_resources["bastion"].cores
     memory        = var.vms_resources["bastion"].memory
-    core_fraction = var.vms_resources["bastion"].core_fraction
+    #core_fraction = var.vms_resources["bastion"].core_fraction
+    core_fraction = 100
   }
   boot_disk {
     initialize_params {      
@@ -102,6 +103,7 @@ data "template_file" "cloudinit-bastion" {
       atlantis_webhook_secret          = var.atlantis_webhook_secret
       cloud_id                         = var.cloud_id
       folder_id                        = var.folder_id
+      dockerhub_token                  = var.dockerhub_token
     })
   }
 }

@@ -109,7 +109,6 @@ variable "dockerhub_username" {
 variable "dockerhub_token" {
   type        = string  
   description = "Token for DockerHub"
-  default     = ""
   sensitive   = true
 }
 

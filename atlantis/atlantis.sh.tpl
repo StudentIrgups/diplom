@@ -44,7 +44,7 @@ mysql_database: "atlantis"
 mysql_user: "atlantis"
 
 # S3 (публичные)
-s3_bucket_name: "${s3_bucket_name}"
+s3_bucket_name: '${s3_bucket_name}'
 s3_endpoint: "${s3_endpoint}"
 
 # Пути к файлам кредов на бастионе
@@ -69,6 +69,9 @@ atlantis_webhook_secret: "${atlantis_webhook_secret}"
 # MySQL
 mysql_root_password: "R00t_P@ssw0rd!"
 mysql_password: "Atl@nt1s_DB_P@ssw0rd!"
+
+#dockerhub token
+dockerhub_token: "${dockerhub_token}"
 EOF
 
 cd /tmp/ansible-atlantis
