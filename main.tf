@@ -108,9 +108,52 @@ data "template_file" "cloudinit-bastion" {
   }
 }
 
-resource "yandex_compute_instance" "k8s" {
-  for_each = { for k, v in module.vpc_dev.subnet_id : k => v if v.name != "public" }
+locals {
+  private_subnets = { for k, v in module.vpc_dev.subnet_id : k => v if v.name != "public" }
+  subnet_count = length(local.private_subnets)
+  need_extra_vm = local.subnet_count > 0 && local.subnet_count % 2 == 0
+  extra_subnet_key = local.need_extra_vm ? keys(local.private_subnets)[0] : null
 
+  vm_subnets = merge(
+    local.private_subnets,
+    local.need_extra_vm ? {
+      "extra-vm-${local.extra_subnet_key}" = local.private_subnets[local.extra_subnet_key]
+    } : {}
+  )
+  
+  vms_per_subnet = {
+    for subnet_key in distinct([for k, v in local.vm_subnets : v.id]) :
+    subnet_key => length([for k, v in local.vm_subnets : k if v.id == subnet_key])
+  }
+
+  distribution_message = join("\n", [
+    "VM distribution per subnet:",
+    join("\n", [for subnet, count in local.vms_per_subnet : "  - ${subnet}: ${count} VM(s)"])
+  ])
+}
+
+# Информационный вывод
+resource "terraform_data" "deployment_info" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      echo "========================================"
+      echo "Kubernetes Control Plane Deployment"
+      echo "========================================"
+      echo "Subnets available: ${local.subnet_count}"
+      echo "VMs to create: ${length(local.vm_subnets)}"
+      %{if local.need_extra_vm}
+      echo "Added extra VM to ensure odd number for etcd quorum"
+      %{endif}
+      echo ""
+      echo "${local.distribution_message}"
+      echo "========================================"
+    EOT
+  }
+}
+
+resource "yandex_compute_instance" "k8s" {
+  for_each = local.vm_subnets
+  
   name                  = each.key
   hostname              = each.key
   zone                  = each.value.zone
