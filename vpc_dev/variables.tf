@@ -59,7 +59,7 @@ variable "mass_zones" {
     },
     { 
         vpc_name       = "ru-central1-e", 
-        subnet_name    = "private4", 
+        subnet_name    = "private5", 
         cidr           = "192.168.6.0/24", 
         route_table_id = "" 
     }
