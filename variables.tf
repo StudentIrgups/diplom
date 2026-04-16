@@ -217,12 +217,12 @@ variable "gitlab_machine_cores" {
 
 variable "gitlab_machine_memory" {
   type        = number
-  default     = 6
+  default     = 8
   description = "RAM of gitlab machine"
 }
 
 variable "gitlab_machine_core_fraction" {
   type        = number
-  default     = 50
+  default     = 100
   description = "Core fraction of gitlab machine"
 }
