@@ -17,9 +17,7 @@ upstream backend_atlantis {
 }
 
 upstream backend_gitlab {
-%{ for content in k8s-nodes ~}
-    server ${content["network_private"]}:33000 max_fails=1 fail_timeout=10s;
-%{ endfor ~}
+    server ${gitlab-vm}:80 max_fails=1 fail_timeout=10s;
 }
 
 server {
@@ -65,9 +63,23 @@ server {
 
     location / {
         proxy_pass http://backend_gitlab;
-        proxy_set_header Host $host;
+        proxy_set_header Host "${gitlab-vm}";
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
+
+        # ВАЖНО: Подменяем Location и Refresh заголовки
+        proxy_redirect http://${gitlab-vm}/ http://$host:84/;
+        proxy_redirect http://backend_gitlab/ http://$host:84/;
+
+        proxy_buffering off;
+        proxy_request_buffering off;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+
+        client_max_body_size 1024m;
+        proxy_read_timeout 3600;
     }
 }
+

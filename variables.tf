@@ -196,3 +196,33 @@ variable "token_gitlab_agent" {
   default     = ""
   description = "Token gitlab agent"
 }
+
+variable "gitlab_machine_disk_size" {
+  type        = number
+  default     = 30
+  description = "Disk size of gitlab machine"
+}
+
+variable "gitlab_machine_disk_type" {
+  type        = string
+  default     = "network-ssd"
+  description = "Disk type of gitlab machine"
+}
+
+variable "gitlab_machine_cores" {
+  type        = number
+  default     = 4
+  description = "CPU cores of gitlab machine"
+}
+
+variable "gitlab_machine_memory" {
+  type        = number
+  default     = 6
+  description = "RAM of gitlab machine"
+}
+
+variable "gitlab_machine_core_fraction" {
+  type        = number
+  default     = 50
+  description = "Core fraction of gitlab machine"
+}

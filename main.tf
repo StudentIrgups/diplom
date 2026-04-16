@@ -67,6 +67,7 @@ data "template_file" "cloudinit-bastion" {
 
     tpl_proxy                 = templatefile("${path.module}/proxy.tftpl", {
         k8s-nodes = local.sorted_list_k8s_nodes
+        gitlab-vm = yandex_compute_instance.gitlab.network_interface[0].ip_address
     })
     sh_app                    = templatefile("${path.module}/nginx-app/nginx-app.tftpl", {
       dockerhub_username = var.dockerhub_username
@@ -220,4 +221,41 @@ resource "local_file" "hosts_templatefile" {
   )
   filename          = "${abspath(path.module)}/hosts.ini"
   file_permission   = "0644"
+}
+
+resource "yandex_compute_instance" "gitlab" {    
+  name                      = "gitlab"
+  hostname                  = "gitlab"
+  zone                      = var.default_zone
+  platform_id               = var.vm_platform_id
+
+  allow_stopping_for_update = true 
+
+  resources { 
+    cores         = var.gitlab_machine_cores
+    memory        = var.gitlab_machine_memory
+    core_fraction = var.gitlab_machine_core_fraction
+  }
+
+  boot_disk {
+    initialize_params {
+      image_id  = data.yandex_compute_image.ubuntu.image_id
+      size      = var.gitlab_machine_disk_size
+      type      = var.gitlab_machine_disk_type
+    }
+  }
+
+  network_interface {
+    subnet_id =  [ for k, v in module.vpc_dev.subnet_id : v if v.name != "public" && v.zone == var.default_zone ][0]["id"]
+    nat       = false
+  }
+
+  scheduling_policy {
+    preemptible = true
+  }
+
+  metadata = {
+    serial-port-enable = 1
+    user-data          = data.template_file.cloud-init.rendered
+  }
 }
