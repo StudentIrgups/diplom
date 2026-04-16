@@ -184,3 +184,15 @@ variable "atlantis_webhook_secret" {
   description = "GITHUB webhook secret"  
   sensitive   = true
 }
+
+variable "token_gitlab_runner" {
+  type        = string 
+  default     = ""
+  description = "Token for CI"
+}
+
+variable "token_gitlab_agent" {
+  type        = string
+  default     = ""
+  description = "Token gitlab agent"
+}

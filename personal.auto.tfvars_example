@@ -8,3 +8,6 @@ s3_bucket_name                   = "bucketName"
 atlantis_github_token            = "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 atlantis_webhook_secret          = "someSecret"
 
+token_gitlab_agent = "glbatn_xxxxxx"
+token_gitlab_runner = "glbrnnr_xxxxx"
+
