@@ -248,6 +248,7 @@ resource "yandex_compute_instance" "gitlab" {
   network_interface {
     subnet_id =  [ for k, v in module.vpc_dev.subnet_id : v if v.name != "public" && v.zone == var.default_zone ][0]["id"]
     nat       = false
+    ip_address =  "192.168.2.33"
   }
 
   scheduling_policy {
