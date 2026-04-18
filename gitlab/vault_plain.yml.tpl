@@ -1,0 +1,5 @@
+"dockerhub_token": "${dockerhub_token}"
+"dockerhub_username": "${dockerhub_username}"
+"github_token": "${github_token}"
+"gitlab_admin_password": "tdfsdfsdfs=xxxxxxxxxxxxxxxxxxx"
+"gitlab_admin_token": "glpat-xxxxxxxxxxxxxxxxxxt2r"

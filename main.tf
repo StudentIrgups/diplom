@@ -107,8 +107,31 @@ data "template_file" "cloudinit-bastion" {
       folder_id                        = var.folder_id
       dockerhub_token                  = var.dockerhub_token
     })
-#    token_gitlab_agent        = var.token_gitlab_agent
-#    token_gitlab_runner       = var.token_gitlab_runner
+
+    tpl_gitlab_vars           = templatefile("${abspath(path.module)}/gitlab/vars.yml.tpl", {
+      container_name                = "app"
+      atlantis_github_user          = var.atlantis_github_user
+      nginx_index_file_project_name = var.nginx_index_file_project_name
+      gitlab_external_url           = "${module.vpc_dev.ip_static}:${var.gitlab_external_port}"
+      gitlab_url                    = yandex_compute_instance.gitlab.network_interface[0].ip_address
+      kube_namespace                = "app"      
+    })
+
+    tpl_gitlab_vault_plain    = templatefile("${abspath(path.module)}/gitlab/vault_plain.yml.tpl", {
+      dockerhub_token    = var.dockerhub_token
+      dockerhub_username = var.dockerhub_username
+      github_token       = var.atlantis_github_token
+    })
+
+    tpl_gitlab_hosts          = templatefile("${abspath(path.module)}/gitlab/hosts.yml.tpl", {
+      gitlab_ip = yandex_compute_instance.gitlab.network_interface[0].ip_address
+    })
+
+    vault_pass                = random_password.vault_pass.result
+
+    tpl_gitlab                = templatefile("${abspath(path.module)}/gitlab/gitlab.sh.tpl", {
+      atlantis_github_user = var.atlantis_github_user
+    })
   }
 }
 
@@ -136,7 +159,6 @@ locals {
   ])
 }
 
-# Информационный вывод
 resource "terraform_data" "deployment_info" {
   provisioner "local-exec" {
     command = <<-EOT
@@ -259,6 +281,11 @@ resource "yandex_compute_instance" "gitlab" {
   }
 }
 
+resource "random_password" "vault_pass" {
+  length  = 32
+  special = false
+}
+/* 
 resource "local_file" "gitlab_vars" {
   content = yamlencode({
     gitlab_hostname        = "gitlab.local"
@@ -368,19 +395,5 @@ resource "null_resource" "copy_ansible_files" {
       "while ! nc -z ${yandex_compute_instance.gitlab.network_interface[0].ip_address} 22; do echo 'Waiting for GitLab VM...'; sleep 5; done",
       "ansible-playbook -i inventory/production/hosts.yml deploy-gitlab-vm.yml --vault-password-file .vault_pass"
     ]
-  }
-}
-
-/* resource "null_resource" "fetch_token" {
-  provisioner "local-exec" {
-    command = "ssh -i ~/.ssh/ssh-key-1756817743452 -o StrictHostKeyChecking=no ubuntu@${yandex_compute_instance.bastion.network_interface[0].nat_ip_address} 'ssh ubuntu@${yandex_compute_instance.gitlab.network_interface[0].ip_address} \"cat /tmp/gitlab_api_token.txt\"' > ${path.module}/gitlab/gitlab_token.txt"
-  }
-}
-
-data "http" "github_public_key" {
-  url = "https://api.github.com/repos/${var.atlantis_github_user}/${var.nginx_index_file_project_name}/actions/secrets/public-key"
-  request_headers = {
-    Authorization = "token ${var.atlantis_github_token}"
-    Accept        = "application/vnd.github.v3+json"
   }
 } */

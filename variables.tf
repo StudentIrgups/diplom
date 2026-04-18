@@ -108,7 +108,7 @@ variable "nginx_index_file" {
 
 variable "dockerhub_username" {
   type        = string
-  default     = "alexbeznosov"
+  default     = ""
   description = "Username for DockerHub"
 }
 
@@ -128,7 +128,7 @@ variable "s3_key" {
 variable "atlantis_github_user" {
   type        = string
   default     = ""
-  description = "GITNUB username"
+  description = "GITHUB username"
 }
 
 variable "atlantis_repo_allowlist" {
@@ -174,8 +174,8 @@ variable "ssh_public_key_path_bastion" {
 }
       
 variable "terraformrc_bastion" {
-  type = string
-  default = "/home/ubuntu/.terraformrc"
+  type        = string
+  default     = "/home/ubuntu/.terraformrc"
   description = "Location of terraformrc file on bastion"
 }
       
