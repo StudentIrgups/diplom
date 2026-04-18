@@ -1,0 +1,13 @@
+"container_name": "${container_name}"
+"github_owner": "${atlantis_github_user}"
+"github_repo": "${nginx_index_file_project_name}"
+"gitlab_external_url": "${gitlab_external_url}"
+"gitlab_hostname": "gitlab.local"
+"gitlab_url": "${gitlab_url}"
+"install_gitlab_runner": true
+"kube_namespace": "${kube_namespace}"
+"kubeconfig_path": "~/.kube/config"
+"project_name": "${nginx_index_file_project_name}"
+"project_name_deploy": "deploy-app"
+"project_visibility": "public"
+"setup_cicd": true

@@ -1,0 +1,3 @@
+cloud_id  = "b1ggxxxxxxxxxxxxxxxx"                                  # ID облака Яндекс
+folder_id = "b1g9xxxxxxxxxxxxxxxx"                                  # ID директории в облаке
+yc_token  = "y0__zxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" # Токен для Яндекс Облака

@@ -10,5 +10,3 @@
 
 # own secret vars store.
 personal.auto.tfvars
-vault_plain.yml
-gitlab_token.txt

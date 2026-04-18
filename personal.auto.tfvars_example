@@ -1,13 +1,11 @@
-cloud_id     = "xxxxxxxxxxx"
-folder_id    = "xxxxxxxxxxxxx"
-dockerhub_token = "dckr_pat_xxxxxxxxxxxxxxxxxxx"
-atlantis_github_user             = "GitHubuserName"
-atlantis_repo_allowlist          = "github.com/GitHubUserName/repoName"
-atlantis_port                    = "88"
-s3_bucket_name                   = "bucketName"
-atlantis_github_token            = "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-atlantis_webhook_secret          = "someSecret"
-
-token_gitlab_agent = "glbatn_xxxxxx"
-token_gitlab_runner = "glbrnnr_xxxxx"
-
+cloud_id                         = "b1ggxxxxxxxxxxxxxxxx"                      # ID облака Яндекс
+folder_id                        = "b1g9xxxxxxxxxxxxxxxx"                      # ID директории в облаке
+dockerhub_token                  = "dckr_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"      # Ваш token в DockerHub
+dockerhub_username               = "xxxxxxx...xxxx"                            # Ваш логин в DockerHub
+atlantis_github_user             = "xxxxxx...xxxx"                             # Ваш логин в GitHub
+atlantis_repo_allowlist          = "github.com/xxxxxx...xxxx/diplom"           # Ссылка на текущий репозиторий
+atlantis_port                    = "88"                                        # Порт Atlantis (внешний)
+s3_bucket_name                   = "to-save-state"                             # Корзина для хранения состояния terraform
+atlantis_github_token            = "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"  # Ваш token в GitHub
+atlantis_webhook_secret          = "xxxxxxxx..xxxx"                            # Секрет для webhook, чтобы провоцировать Atlantis
+gitlab_external_port             = "87"                                        # Порт GitLab (внешний)
