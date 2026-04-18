@@ -293,7 +293,7 @@ resource "local_file" "gitlab_vault" {
     # GitHub
     github_token          = var.atlantis_github_token
   })
-  filename = "${path.module}/gitlab/valut_plain.yml"
+  filename = "${path.module}/gitlab/vault_plain.yml"
 }
 
 resource "local_file" "gitlab_inventory" {
@@ -374,7 +374,7 @@ resource "null_resource" "copy_ansible_files" {
   }
 }
 
-resource "null_resource" "fetch_token" {
+/* resource "null_resource" "fetch_token" {
   provisioner "local-exec" {
     command = "ssh -i ~/.ssh/ssh-key-1756817743452 -o StrictHostKeyChecking=no ubuntu@${yandex_compute_instance.bastion.network_interface[0].nat_ip_address} 'ssh ubuntu@${yandex_compute_instance.gitlab.network_interface[0].ip_address} \"cat /tmp/gitlab_api_token.txt\"' > ${path.module}/gitlab/gitlab_token.txt"
   }
@@ -386,16 +386,4 @@ data "http" "github_public_key" {
     Authorization = "token ${var.atlantis_github_token}"
     Accept        = "application/vnd.github.v3+json"
   }
-}
-
-resource "null_resource" "update_github_secret" {
-  provisioner "local-exec" {
-    command = <<-EOT
-      curl -X PUT \
-        -H "Authorization: token ${var.atlantis_github_token}" \
-        -H "Accept: application/vnd.github.v3+json" \
-        https://api.github.com/repos/${var.atlantis_github_user}/${var.nginx_index_file_project_name}/actions/secrets/BASTION_IP \
-        -d '{"encrypted_value":"${base64encode(yandex_compute_instance.bastion.network_interface[0].nat_ip_address)}:${var.gitlab_external_port}","key_id":"${jsondecode(data.http.github_public_key.response_body).key_id}"}'
-    EOT
-  }
-}
+} */
