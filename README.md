@@ -88,7 +88,7 @@
 
     Обновляем страницу и видим новое приложение:
 
-![alter](./images/appBeforeUpdate.png)    
+![alter](./images/appAfterUpdate.png)    
 
 [Ссылка](https://hub.docker.com/repository/docker/alexbeznosov/nginx_index_file/general) на автоматически собранный Docker образ приложения.
 
