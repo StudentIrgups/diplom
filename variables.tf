@@ -94,6 +94,12 @@ variable "nat_image_id" {
   description = "Image for NAT (bastion)"
 }
 
+variable "nginx_index_file_project_name" {
+  type        = string
+  default     = "nginx_index_file"
+  description = "Name of project to build and deploy"
+}
+
 variable "nginx_index_file" {
   type        = string
   default     = "https://github.com/StudentIrgups/nginx_index_file.git"
@@ -225,4 +231,10 @@ variable "gitlab_machine_core_fraction" {
   type        = number
   default     = 100
   description = "Core fraction of gitlab machine"
+}
+
+variable "gitlab_external_port" {
+  type        = number
+  default     = 84
+  description = "Port to access from outside"
 }

@@ -59,7 +59,7 @@ server {
 }
 
 server {
-    listen 84;
+    listen "${gitlab-port}";
 
     location / {
         proxy_pass http://backend_gitlab;
@@ -69,8 +69,8 @@ server {
         proxy_set_header X-Forwarded-Proto $scheme;
 
         # ВАЖНО: Подменяем Location и Refresh заголовки
-        proxy_redirect http://${gitlab-vm}/ http://$host:84/;
-        proxy_redirect http://backend_gitlab/ http://$host:84/;
+        proxy_redirect http://${gitlab-vm}/ http://$host:${gitlab-port}/;
+        proxy_redirect http://backend_gitlab/ http://$host:${gitlab-port}/;
 
         proxy_buffering off;
         proxy_request_buffering off;

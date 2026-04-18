@@ -56,12 +56,6 @@ variable "mass_zones" {
         subnet_name    = "private2", 
         cidr           = "192.168.4.0/24", 
         route_table_id = "" 
-    },
-    { 
-        vpc_name       = "ru-central1-e", 
-        subnet_name    = "private5", 
-        cidr           = "192.168.6.0/24", 
-        route_table_id = "" 
     }
     ]
 }

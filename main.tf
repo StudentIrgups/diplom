@@ -66,8 +66,9 @@ data "template_file" "cloudinit-bastion" {
     })
 
     tpl_proxy                 = templatefile("${path.module}/proxy.tftpl", {
-        k8s-nodes = local.sorted_list_k8s_nodes
-        gitlab-vm = yandex_compute_instance.gitlab.network_interface[0].ip_address
+        k8s-nodes   = local.sorted_list_k8s_nodes
+        gitlab-vm   = yandex_compute_instance.gitlab.network_interface[0].ip_address
+        gitlab-port = var.gitlab_external_port
     })
     sh_app                    = templatefile("${path.module}/nginx-app/nginx-app.tftpl", {
       dockerhub_username = var.dockerhub_username
@@ -106,10 +107,8 @@ data "template_file" "cloudinit-bastion" {
       folder_id                        = var.folder_id
       dockerhub_token                  = var.dockerhub_token
     })
-    token_gitlab_agent        = var.token_gitlab_agent
-    token_gitlab_runner       = var.token_gitlab_runner
-
-    sh_gitlab                 = filebase64("${abspath(path.module)}/gitlab/gitlab.sh.tpl")
+#    token_gitlab_agent        = var.token_gitlab_agent
+#    token_gitlab_runner       = var.token_gitlab_runner
   }
 }
 
@@ -248,7 +247,6 @@ resource "yandex_compute_instance" "gitlab" {
   network_interface {
     subnet_id =  [ for k, v in module.vpc_dev.subnet_id : v if v.name != "public" && v.zone == var.default_zone ][0]["id"]
     nat       = false
-    ip_address =  "192.168.2.33"
   }
 
   scheduling_policy {
@@ -258,5 +256,146 @@ resource "yandex_compute_instance" "gitlab" {
   metadata = {
     serial-port-enable = 1
     user-data          = data.template_file.cloud-init.rendered
+  }
+}
+
+resource "local_file" "gitlab_vars" {
+  content = yamlencode({
+    gitlab_hostname        = "gitlab.local"
+    install_gitlab_runner  = true
+    # GitLab
+    gitlab_url             = yandex_compute_instance.gitlab.network_interface[0].ip_address
+    gitlab_external_url    = "${yandex_compute_instance.bastion.network_interface[0].nat_ip_address}:${var.gitlab_external_port}"
+    # Project
+    project_name           = var.nginx_index_file_project_name
+    project_name_deploy    = "deploy-app"
+    container_name         = "app"
+    project_visibility     = "public"
+    setup_cicd             = true
+    # Kubernetes
+    kube_namespace         = "app"
+    kubeconfig_path        = "~/.kube/config"
+    # GitHub
+    github_owner           = var.atlantis_github_user
+    github_repo            = var.nginx_index_file_project_name
+  })
+  filename = "${path.module}/gitlab/vars.yml"
+}
+
+resource "local_file" "gitlab_vault" {
+  content = yamlencode({
+    gitlab_admin_password = "tdfsdfsdfs=xxxxxxxxxxxxxxxxxxx"
+    # GitLab API
+    gitlab_admin_token    = "glpat-xxxxxxxxxxxxxxxxxxt2r"
+    # Docker Hub
+    dockerhub_username    = var.dockerhub_username
+    dockerhub_token       = var.dockerhub_token
+    # GitHub
+    github_token          = var.atlantis_github_token
+  })
+  filename = "${path.module}/gitlab/valut_plain.yml"
+}
+
+resource "local_file" "gitlab_inventory" {
+  content = templatefile("${path.module}/gitlab/templates/hosts.yml.tpl", {
+    gitlab_ip = yandex_compute_instance.gitlab.network_interface[0].ip_address
+  })
+  filename = "${path.module}/gitlab/hosts.yml"
+}
+
+resource "random_password" "vault_pass" {
+  length  = 32
+  special = false
+}
+
+resource "null_resource" "copy_ansible_files" {
+  connection {
+    host        = yandex_compute_instance.bastion.network_interface[0].nat_ip_address
+    user        = "ubuntu"
+    private_key = file("~/.ssh/ssh-key-1756817743452")
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "rm -rf /tmp/ansible-gitlab"
+    ]
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "git clone https://github.com/${var.atlantis_github_user}/ansible-gitlab.git /tmp/ansible-gitlab"
+    ]
+  }
+
+  provisioner "file" {
+    source      = local_file.gitlab_vars.filename
+    destination = "/tmp/ansible-gitlab/inventory/production/group_vars/all/vars.yml"
+  }
+
+  provisioner "file" {
+    source      = local_file.gitlab_vault.filename
+    destination = "/tmp/ansible-gitlab/inventory/production/group_vars/all/vault_plain.yml"
+  }
+
+  provisioner "file" {
+    content     = random_password.vault_pass.result
+    destination = "/tmp/ansible-gitlab/.vault_pass"
+  }
+
+  # Зашифровать vault на бастионе
+  provisioner "remote-exec" {
+    inline = [
+      "cd /tmp/ansible-gitlab",
+      "ansible-vault encrypt inventory/production/group_vars/all/vault_plain.yml --vault-password-file .vault_pass --output inventory/production/group_vars/all/vault.yml",
+      "rm inventory/production/group_vars/all/vault_plain.yml"
+    ]
+  }
+
+  provisioner "file" {
+    source      = local_file.gitlab_inventory.filename
+    destination = "/tmp/ansible-gitlab/inventory/production/hosts.yml"
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "cd /tmp/ansible-gitlab",
+      "ansible-playbook -i inventory/production/hosts.yml deploy-gitlab-vm.yml --vault-password-file .vault_pass"
+    ]
+  }
+
+  provisioner "remote-exec" {
+    inline = [
+      "ssh ubuntu@${yandex_compute_instance.gitlab.network_interface[0].ip_address} 'sudo cat /root/gitlab_token.txt' > /tmp/token.txt"
+    ]
+  }
+
+  provisioner "local-exec" {
+    command = "scp ubuntu@${yandex_compute_instance.bastion.network_interface[0].nat_ip_address}' ubuntu@${yandex_compute_instance.gitlab.network_interface[0].ip_address}:/tmp/token.txt ./gitlab_token.txt"
+  }
+}
+
+resource "null_resource" "fetch_token" {
+  provisioner "local-exec" {
+    command = "ssh -i ~/.ssh/ssh-key-1756817743452 -o StrictHostKeyChecking=no ubuntu@${yandex_compute_instance.bastion.network_interface[0].nat_ip_address} 'ssh ubuntu@${yandex_compute_instance.gitlab.network_interface[0].ip_address} \"cat /tmp/gitlab_api_token.txt\"' > ${path.module}/gitlab/gitlab_token.txt"
+  }
+}
+
+data "http" "github_public_key" {
+  url = "https://api.github.com/repos/${var.atlantis_github_user}/${var.nginx_index_file_project_name}/actions/secrets/public-key"
+  request_headers = {
+    Authorization = "token ${var.atlantis_github_token}"
+    Accept        = "application/vnd.github.v3+json"
+  }
+}
+
+resource "null_resource" "update_github_secret" {
+  provisioner "local-exec" {
+    command = <<-EOT
+      curl -X PUT \
+        -H "Authorization: token ${var.atlantis_github_token}" \
+        -H "Accept: application/vnd.github.v3+json" \
+        https://api.github.com/repos/${var.atlantis_github_user}/${var.nginx_index_file_project_name}/actions/secrets/BASTION_IP \
+        -d '{"encrypted_value":"${base64encode(yandex_compute_instance.bastion.network_interface[0].nat_ip_address)}:${var.gitlab_external_port}","key_id":"${jsondecode(data.http.github_public_key.response_body).key_id}"}'
+    EOT
   }
 }

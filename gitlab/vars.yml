@@ -1,0 +1,13 @@
+"container_name": "app"
+"github_owner": "StudentIrgups"
+"github_repo": "nginx_index_file"
+"gitlab_external_url": "62.84.126.52:84"
+"gitlab_hostname": "gitlab.local"
+"gitlab_url": "192.168.2.16"
+"install_gitlab_runner": true
+"kube_namespace": "app"
+"kubeconfig_path": "~/.kube/config"
+"project_name": "nginx_index_file"
+"project_name_deploy": "deploy-app"
+"project_visibility": "public"
+"setup_cicd": true
