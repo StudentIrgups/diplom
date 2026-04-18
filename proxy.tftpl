@@ -1,23 +1,23 @@
 upstream backend_app {
 %{ for content in k8s-nodes ~}
-    server ${content["network_private"]}:30000 max_fails=1 fail_timeout=10s;
+    server ${content["network_private"]}:30000 max_fails=3 fail_timeout=20s;
 %{ endfor ~}
 }
 
 upstream backend_grafana {
 %{ for content in k8s-nodes ~}
-    server ${content["network_private"]}:31000 max_fails=1 fail_timeout=10s;
+    server ${content["network_private"]}:31000 max_fails=3 fail_timeout=20s;
 %{ endfor ~}
 }
 
 upstream backend_atlantis {
 %{ for content in k8s-nodes ~}
-    server ${content["network_private"]}:32000 max_fails=1 fail_timeout=10s;
+    server ${content["network_private"]}:32000 max_fails=3 fail_timeout=20s;
 %{ endfor ~}
 }
 
 upstream backend_gitlab {
-    server ${gitlab-vm}:80 max_fails=1 fail_timeout=10s;
+    server ${gitlab-vm}:80 max_fails=3 fail_timeout=20s;
 }
 
 server {
