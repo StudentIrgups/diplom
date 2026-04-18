@@ -309,6 +309,8 @@ resource "random_password" "vault_pass" {
 }
 
 resource "null_resource" "copy_ansible_files" {
+  depends_on = [ yandex_compute_instance.bastion,
+                 yandex_compute_instance.gitlab ]
   connection {
     host        = yandex_compute_instance.bastion.network_interface[0].nat_ip_address
     user        = "ubuntu"
@@ -345,6 +347,10 @@ resource "null_resource" "copy_ansible_files" {
   # Зашифровать vault на бастионе
   provisioner "remote-exec" {
     inline = [
+      "while ! command -v ansible-playbook >/dev/null 2>&1; do sleep 5; done",
+      "sudo chown -R ubuntu:ubuntu /home/ubuntu",
+      "while [ ! -f /home/ubuntu/.ssh/id_rsa ]; do echo 'Waiting for SSH key...'; sleep 5; done",
+      "chmod 600 /home/ubuntu/.ssh/id_rsa",
       "cd /tmp/ansible-gitlab",
       "ansible-vault encrypt inventory/production/group_vars/all/vault_plain.yml --vault-password-file .vault_pass --output inventory/production/group_vars/all/vault.yml",
       "rm inventory/production/group_vars/all/vault_plain.yml"
@@ -359,18 +365,9 @@ resource "null_resource" "copy_ansible_files" {
   provisioner "remote-exec" {
     inline = [
       "cd /tmp/ansible-gitlab",
+      "while ! nc -z ${yandex_compute_instance.gitlab.network_interface[0].ip_address} 22; do echo 'Waiting for GitLab VM...'; sleep 5; done",
       "ansible-playbook -i inventory/production/hosts.yml deploy-gitlab-vm.yml --vault-password-file .vault_pass"
     ]
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "ssh ubuntu@${yandex_compute_instance.gitlab.network_interface[0].ip_address} 'sudo cat /root/gitlab_token.txt' > /tmp/token.txt"
-    ]
-  }
-
-  provisioner "local-exec" {
-    command = "scp ubuntu@${yandex_compute_instance.bastion.network_interface[0].nat_ip_address}' ubuntu@${yandex_compute_instance.gitlab.network_interface[0].ip_address}:/tmp/token.txt ./gitlab_token.txt"
   }
 }
 
