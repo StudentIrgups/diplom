@@ -10,3 +10,6 @@
 
 # own secret vars store.
 personal.auto.tfvars
+
+#ini files
+hosts.ini
